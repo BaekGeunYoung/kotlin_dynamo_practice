@@ -6,6 +6,7 @@ import com.amazonaws.services.dynamodbv2.model.AttributeValue
 import com.amazonaws.services.dynamodbv2.model.GetItemRequest
 import java.util.*
 
+//getitem : 지정해준 table과 key에 해당하는 item을 가져옴
 fun main() {
     val tableName = "test_table"
     val name = "geunyoung"

@@ -4,7 +4,7 @@ import com.amazonaws.services.dynamodbv2.AmazonDynamoDB
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClientBuilder
 import com.amazonaws.services.dynamodbv2.model.*
 
-
+//createTable : table 생성
 fun main() {
     val tableName = "test_table"
     val request: CreateTableRequest = CreateTableRequest()

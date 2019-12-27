@@ -6,6 +6,7 @@ import com.amazonaws.services.dynamodbv2.model.AttributeValue
 import com.amazonaws.services.dynamodbv2.model.ResourceNotFoundException
 import java.util.*
 
+//putItem : 지정해준 table에 item 삽입
 fun main() {
     val tableName = "test_table"
 
