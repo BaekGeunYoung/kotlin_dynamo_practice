@@ -7,6 +7,9 @@ import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBScanExpression
 import com.amazonaws.services.dynamodbv2.model.AttributeValue
 import com.amazonaws.services.dynamodbv2.model.ProvisionedThroughput
 import table.Event
+import table.Reservation
+import java.lang.Exception
+import java.time.LocalDateTime
 
 //scan : 해당 table의 모든 item들을 가져옴.
 fun main() {
@@ -15,7 +18,7 @@ fun main() {
         .build()
     val ddbMapper = DynamoDBMapper(ddb)
 
-    scanByPartition(ddb, ddbMapper, "3")
+    scanByPartition(ddb, ddbMapper, 3)
 }
 
 fun createEventTable(ddb: AmazonDynamoDB, ddbMapper: DynamoDBMapper) {
@@ -30,7 +33,7 @@ fun createEventTable(ddb: AmazonDynamoDB, ddbMapper: DynamoDBMapper) {
     }
 }
 
-fun putItems(ddb: AmazonDynamoDB, ddbMapper: DynamoDBMapper, eventId: String) {
+fun putItems(ddb: AmazonDynamoDB, ddbMapper: DynamoDBMapper, eventId: Int) {
     val event1 = Event(event_id = eventId, event_name = "START")
     val event2 = Event(event_id = eventId, event_name = "RESERVATION")
     val event3 = Event(event_id = eventId, event_name = "LOGIN")
@@ -51,9 +54,9 @@ fun putItems(ddb: AmazonDynamoDB, ddbMapper: DynamoDBMapper, eventId: String) {
 }
 
 //partition key를 이용한 search
-fun scanByPartition(ddb: AmazonDynamoDB, ddbMapper: DynamoDBMapper, eventId: String) {
+fun scanByPartition(ddb: AmazonDynamoDB, ddbMapper: DynamoDBMapper, eventId: Int) {
     val eav = HashMap<String, AttributeValue>()
-    eav[":eventId"] = AttributeValue(eventId)
+    eav[":eventId"] = AttributeValue().withN(eventId.toString())
 
     val scanExpression = DynamoDBScanExpression()
         .withFilterExpression("event_id = :eventId")
@@ -62,6 +65,17 @@ fun scanByPartition(ddb: AmazonDynamoDB, ddbMapper: DynamoDBMapper, eventId: Str
     val scanList = ddbMapper.scan(Event::class.java, scanExpression)
 
     for(item in scanList) {
-        println("${item.event_id} , ${item.event_name}")
+        println("${item.event_id} , ${item.event_name} , ${item.lastLoginDatetime}, ${item.lastPageViewDatetime}")
+    }
+}
+
+fun createWithRandomId(ddbMapper: DynamoDBMapper) {
+    val reservation = Reservation(user_id = "geunyoung", reservation_datetime = LocalDateTime.now())
+
+    try {
+        ddbMapper.save(reservation)
+        println("success")
+    } catch (e : Exception) {
+        println(e.message)
     }
 }
